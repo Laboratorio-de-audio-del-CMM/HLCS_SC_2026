@@ -66,9 +66,13 @@ Estos últimos tres elementos (lista de documentos, navegador de ayuda y ventana
 */
 
 //Para ir al siguiente tutorial, ejecuta la siguiente línea de código:
-"1.3 Acciones básicas.scd".openOS;
+"1.3_Acciones_basicas.scd".openOS;
 
-(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.3 Acciones básicas.scd").openOS;
+(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.3_Acciones_basicas.scd").openOS;
+
 //Para ir al tutorial anterior, ejecuta la siguiente línea de código:
-"1.2 Arquitectura de SuperCollider.scd".openOS;
-(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.2 Arquitectura de SuperCollider.scd").openOS;
+
+"1.2_Arquitectura_de_supercollider.scd".openOS;
+
+(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.2_Arquitectura_de_supercollider.scd").openOS;
+

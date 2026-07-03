@@ -39,11 +39,11 @@ El diseño de SuperCollider está pensado para ser extremadamente flexible y efi
 
 
 //Para ir al siguiente tutorial, ejecuta la siguiente línea de código
-"1.2.1 Conociendo el scIDE.scd".openOS;
+"1.2.1_Conociendo_el_scIDE".openOS;
 
-(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.2.1 Conociendo el scIDE.scd").openOS;
+(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.2.1_Conociendo_el_scIDE").openOS;
 
 //Para ir al tutorial anterior, ejecuta la siguiente línea de código
-"1.1 Presentación y recursos.scd".openOS;
+"1.1_Presentacion_y_recursos".openOS;
 
-(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.1 Presentación y recursos.scd").openOS;
+(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.1_Presentacion_y_recursos").openOS;

@@ -45,7 +45,11 @@ multilínea.
 
 
 //Siguiente tutorial
-"1.3.3 Navegar la ayuda.scd".openOS;
+"1.3.3_Navegar_la_ayuda.scd".openOS;
+
+(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.3.3_Navegar_la_ayuda.scd").openOS;
 
 //Tutorial anterior
-"1.3.1 Evaluar código.scd".openOS;
+"1.3.1_Evaluar_codigo.scd".openOS;
+
+(PathName.new(thisProcess.nowExecutingPath).parentPath+/+"1.3.1_Evaluar_codigo.scd").openOS;
