@@ -3,11 +3,11 @@ Para generar sonido, el servidor utiliza definiciones de síntesis y nodos de s�
 
 Los nodos de síntesis en el servidor son procesos computacionales que generan o procesan señales de sonido o control.
 
-Una definición de síntesis representa del lado de lenguaje, los parámetros de un nodo de síntesis del servidor. Es un mapa detallado de interconecciones de generadores de unidades.
+Una definición de síntesis representa del lado del lenguaje, los parámetros de un nodo de síntesis del servidor. Es un mapa detallado de interconecciones de generadores de unidades.
 
 La clase SynthDef nos permite trabajar de manera más felxible y especializada con definiciones de síntesis.
 
-La estructura de una definición de síntesis es la siguiente.
+La estructura básica de una definición de síntesis es la siguiente.
 */
 
 (
@@ -15,17 +15,16 @@ SynthDef.new(//Clase SynthDef con método .new
 	\miPrimerSinte, //Nombre a manera de symbol o string
 	{Pulse.ar(220,0.4)} //Función generadora de sonido
 ).play; //Método: ¿Qué se hace con esta nueva definición de síntesis?
+)
 
 /*
-Si queremos reproducir el resultado de la definición de manera inmediata (crear su respectivo nodo de síntesis), usamos el método .play
+Si queremos reproducir el resultado de la definición de manera inmediata (creando su respectivo nodo de síntesis), usamos el método .play
 
 Si queremos agregar una definición de síntesis al servidor sin crear el nodo de síntesis de manera inmediata, usamos  el método .add
 
 Pero entonces, ¿por qué no obtenemos sonido al evaluar la definición anterior?
 
-La estructura de definiciones y nodos de síntesis es la única forma de producir sonido en superCollider. Aplicado a una función, el método .play crea automáticamente una definción y un nodo de síntesis. Si la función no cuenta con parámetros de envolvente y salida, el método .play añade estos parámetros de manera automática.
-
-Cuando creamos manualmente una definición de síntesis, la envolvente y la salida deben ser especificados manualmente.
+Hasta ahora hemos estado generando sonido con funciones y el método .play. Sin embargo, la estructura de definiciones y nodos de síntesis es la única forma de producir sonido en superCollider. Aplicado a una función, el método .play crea automáticamente una definción y un nodo de síntesis. Si la función no cuenta con parámetros de envolvente y de salida, el método .play los añade de manera automática. Cuando creamos una definición de síntesis personalizada, la envolvente y la salida deben ser especificadas manualmente.
 */
 
 (
@@ -33,28 +32,40 @@ SynthDef.new(
 	\miPrimerSinte,
 	{var sig, env; //Agregamos variables para más claridad en el proceso
 		sig = Pulse.ar(220,0.4); //Generador de unidades
-		env = Env.perc().kr(2); //Envolvente
+		env = Env.perc().kr(2); //EnvolventeF
 		sig = sig * env; //Aplicación de la envolvente a la señal de audio
-		Out.ar(0,sig) //Especificación de la salida
+		Out.ar(0,sig) //EFspecificación de la salida
 		}
 ).play;
 )
 
 //Out toma dos argumentos: (1) el número de índex del bus o buses por los que saldrá la señal de audio o control (0 y 1 a menudo son los canales izquierdo y derecho respectivamente), (2) un UGen o arreglo de Ugens.
 
+/*
+Una vez que una definción de síntesis se manda al servidor, permanece disponible mientras el servidor esté inicializado. Para hacer cambios en la definción, hay que declararla de nuevo con los cambios. Los nombres de cada SynthDef deben ser únicos para evitar referenciar con un mismo nombre cosas distintas.
 
-Once a SynthDef has been added, it will remain available as long as the SC environment re-
-mains open and the server remains booted. If you want to make changes to the SynthDef, you
-can re-evaluate the code, and the new definition will overwrite the old one. There can only be
-one SynthDef with a specific name, so if you have multiple SynthDefs, be sure to give them
-unique names.
-
-
-
-
-
-
+Una definción de síntesis añadida al servidor se ejecuta de manera asincrónica con la clase Synth. Como mínimo, Synth necesita el nombre de la definición de síntesis para funcionar.
 */
+
+//Añadimos la definición de síntesis al servidor
+(
+SynthDef.new(
+	\miPrimerSinte,
+	{var sig, env; //Agregamos variables para más claridad en el proceso
+		sig = Pulse.ar(220,0.4); //Generador de unidades
+		env = Env.perc().kr(2); //EnvolventeF
+		sig = sig * env; //Aplicación de la envolvente a la señal de audio
+		Out.ar(0,sig) //Especificación de la salida
+		}
+).add;
+)
+
+//La ejecutamos con Synth
+Synth(\miPrimerSinte);
+
+//Si asignamos
+
+
 
 We can execute a SynthDef algorithm by instantiating a Synth. At minimum, the Synth needs
 to know the name of the SynthDef to be used. If we assign the Synth to a variable, we can com-
