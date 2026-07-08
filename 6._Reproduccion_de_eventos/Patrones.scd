@@ -186,3 +186,25 @@ Secuencia una serie geométrica. Se especifica un número inicial y el factor de
 ~sec_9.next;
 ~sec_9.reset;
 
+/*
+Pshuf
+Secuencia una serie geométrica. Se especifica un número inicial y el factor de multiplicación.
+*/
+~pat_10 = Pshuf([1,2,3,4,5],inf);
+~sec_10 = ~pat_10.asStream;
+~sec_10.next;
+~sec_10.reset;
+
+/*//////////////////////////
+//Operaciónes con PATRONES//
+*///////////////////////////
+
+//Podemos realizar operaciones entre patrones.
+
+~pat_11 = Pseq([10,20,30,40,50,60,70,80,90],inf) * Prand([-1,1],inf);
+~seq_11 = ~pat_11.asStream;
+~seq_11.nextN(10);
+~seq_11.reset;
+
+
+
