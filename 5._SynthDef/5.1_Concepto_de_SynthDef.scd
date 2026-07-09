@@ -120,4 +120,6 @@ s.sendMsg(\n_free, 1028);
 
 //Una definción de síntesis es una entidad estática una vez que se declara, sin embargo, puede llegar a ser bastante flexible por medio de argumentos.
 
+//Ctrl (o cmd) + . detiene todos los nodos que el servidor se encuentra ejecutando.
+
 //Para ejemplos cortos y pruebas rápidas, la estructura de función y el método .play puede llegar a ser más conveniente y apropiada que una definición de síntesis. Sin embargo, en proyectos grandes y algoritmos complejos de generación o procesamiento de audio, ua definición e síntesis nos provee de mayor felxibilidad y optimización de recursos.
