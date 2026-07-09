@@ -50,73 +50,127 @@ Env.new(
 /*
 Pero entonces, ¿Cómo incorporamos envolventes a nuestras definciones de síntesis?
 
-Existen difeerentes clases que nos permiten incorporar envolventes para controlar parámetros de generadores de unidades. Algunas de ellas son: */
+Existen diferentes clases que nos permiten incorporar envolventes para controlar parámetros de generadores de unidades. Estas clases, también entran en la clasificación de generadores de unidades. Algunas de ellas son: */
 
 Line
+//Genera una señal que transiciona de manera lineal de un valor a otro
+{Line.kr(start: 0, end: 1, dur: 1)}.plot(1);
+{Line.kr(0,1,1)}.plot(1); //Síntaxis alternativa
+{Line.kr()}.plot(1); //Síntaxis alternativa
+
 XLine
-Linen
+//Genera una señal que transiciona de manera exponencial de un valor a otro.
+{XLine.kr(start: 0.01, end: 10,dur: 3)}.plot(3);
+
+//NOTA: Las clases que tratan con valores exponenciales deben especificar sus valores con el mísmo sígno (+ o -) y ninguno de los dos deberá ser 0. De no tomar en cuenta estas indicaciones, obtendremos un error.
+{XLine.kr(start: 0,end: 3, dur: 1)}.plot(1);
+{XLine.kr(start: -1,end: 3, dur: 1)}.plot(1);
+{XLine.kr(start: 0.000000000001,end: 3, dur: 1)}.plot(1);
+
 EnvGen
+//Reproductor de envolventes personalizadas
 
+Transiciona entre distintos puntos especificados por el usuario, con curvas y tiempos de transición personalizables.
 
-//Probemos Line, XLine, Linen como envolventes de amplitud para el siguiente sintetizador:
+//Probemos Line y XLine como envolventes de amplitud para el siguiente sintetizador:
 
 (
 SynthDef.new(
-	\miPrimerSinte,
+	\envRecta,
 	{
-		arg freq = 440, amp = 0.4;
-		var sig;
-		sig = Pulse.ar(freq,0.4,amp); //Argumentos de frecuencia y amplitud
-		Out.ar(0,sig) //Especificación de la salida
+		arg freq = 440;
+		var sig, env;
+		sig = Pulse.ar(freq,0.4); //Generador de unidades
+		env = Line.kr(start: 0,end: 0.7,dur: 5); //Line como envolvente de amplitud
+		//env = XLine.kr(start: 0.01,end: 0.7,dur: 5); //XLine como envolvente de amplitud
+		sig = sig * env; //Aplicación de envolvente
+		Out.ar(0,sig)
 		}
-).add;
+).play;
+Stethoscope.new(numChannels: 1);
 )
 
+/*
+Y ¿por qué al llegar a su último punto, la envolvente permanece ahí indefinidamente? Este es un parámetro que puede modificarse con el argumento doneAction.
+
+El argumento doneAction define qué se hará con el nodo en el servidor una vez que un generador de unidades finalice su reproducción.
+
+Las acciones disponibles y su tabla de equivalencia a números pueden consultarse en la ayuda de la clase Done.
+
+SuperCollider usa por defecto el valor "0"  para doneAction, lo que significa que no implementa ninguna acción cuando un generador de unidades termina de reproducirse. Esto puede provocar que el nodo siga existiendo en el servidor aún sin estar sonando.
+*/
+
+(
+SynthDef.new(
+	\envRecta,
+	{
+		var sig, env;
+		sig = Pulse.ar(133,0.4);
+		env = Line.kr(start: 1, end: 0, dur: 5, doneAction: 0); //Envolvente con doneAction 0
+		sig = sig * env;
+		Out.ar(0,sig);
+		}
+).play;
+Stethoscope.new(numChannels: 1);
+NodeTreeView().start;
+)
+
+//En la práctica, el doneAction más común para envolventes es el "2", que libera el nodo correspondiente cuando una envolvente ha llegado a su último punto. Esto nos ayuda a no acumular procesos "fantasma" en nuestro servidor.
+
+//Prueba cambiar el doneAction de la definición de arriba por 2.
+
+/*
+Line y XLine son útiles para realizar automatizaciones simples, sin embargo, el verdadero potencial de las envolventes se encuentra en las clase EnvGen y Env.
+
+Como dijimos, EnvGen es un reproductor de envolventes personalizadas.
+
+La envolvente en custión se genera con la clase Env.
+
+Para generar una envolvente personalizada usamos la clase Env y el método .new
+
+Los argumentos relevantes que tendremos a nuestra disposición serán:
+
+1. levels: Un arreglo especificando la sucesión de puntos.
+
+2. times: Un arreglo especificando la duración de la transiciones entre puntos.
+
+3. curve:
+
+*/
+{Env.new([0.2,1,0.5],[2,4])}.plot(6);
+
+Env también recibe algunos métodos que generan envolventes estandarizadas: */
+
+//ASR
+Env.asr().plot;
+
+//ADSR
+Env.adsr().plot;
+
+//ADSR
+Env.perc
 
 
 
- Line generates a signal that
-travels linearly from one value to another over a duration in seconds. XLine is similar but
-features an exponentially curved trajectory.
+{Env.adsr(1,2,0.5,1,curve: -10)}.plot(5);
 
 
-The UGens Line and XLine provide simple envelope shapes. Line generates a signal that
-travels linearly from one value to another over a duration in seconds. XLine is similar but
-features an exponentially curved trajectory. Like the exprand and exprange methods,
-the start and end values for XLine must have the same sign and neither can be zero. Code
-Example 2.14 and Figure 2.8 depict the usage and visual results of using these UGens as am-
-plitude envelopes. Note that XLine cannot end at zero, but it can get close enough that the
-difference is unnoticeable.
-
-Line and XLine include an argument, named doneAction, which appears in UGens that
-have an inherently finite duration. In SC, a doneAction represents an action that the audio
-server takes when the UGen that contains the doneAction has finished. These actions can be
-specified by integer, and a complete list of available actions and their meanings appears in the
-help file for the Done UGen. Most of the descriptions in this table may look completely mean-
-ingless to you, but if so, don’t worry. In practice, we rarely employ a doneAction other than
-zero (do nothing) or two (free the enclosing synth). The default doneAction is zero, and while
-taking no action sounds harmless, it carries consequences. To demonstrate, evaluate either of
-the two code examples in Code Example 2.14 many times in a row. As you do, you’ll notice
-your CPU usage will gradually creep upwards.
-Why does this happen? Because a doneAction of zero tells the server to do nothing when
-the envelope is complete, the envelope remains active on the server and continues to output
-its final value indefinitely. These zero or near-zero values are multiplied by the sine oscillator,
-which results in a silent or near-silent signal. The server is indifferent to whether a sound pro-
-cess is silent; it only knows that it was instructed to do nothing when the envelope finished.
-If you evaluate this code over and over, you’ll create more and more non-terminating sound
-processes. Eventually, the server will become overwhelmed, and additional sounds will start
-glitching (if you’ve followed these instructions and ramped up your CPU numbers, now is a
-good time to press [cmd]+[period] to remove these “ghost” sounds).
-From a practical perspective, when our envelope reaches its end, we consider the sound to
-be totally finished. So, it makes sense to specify 2 for the doneAction. When running the code
-in Code Example 2.15, the server automatically frees the sound when the envelope is done.
-Evaluate this code as many times as you like, and although it won’t sound any different, you’ll
-notice that CPU usage will not creep upwards as it did before.
-
-Knowing which doneAction to specify is an important skill, essential for automating the
-cleanup of stale sounds and optimizing usage of the audio server’s resources.
 
 
+EnvGen.kr(envelope: ,gate: );
+
+
+
+
+
+Lines are useful for simple envelopes, but don’t provide much flexibility. Once a Line or
+XLine starts, it cannot be restarted, modified, or looped; it merely travels from start to end,
+and triggers a doneAction when finished. In most cases, it’s preferable to use the more flexible
+EnvGen. The shape of an EnvGen is determined by an instance of a language-side class called
+Env , provided as the envelope signal’s first argument. An instance of Env created with new
+expects three arguments: an array of level values, an array of segment durations, and an array
+of curve specifications. We can also plot an Env to visualize its shape. Code Example 2.16
+and Figure 2.9 demonstrate the creation of an Env and its visual appearance.
 
 Intérprete vs sclang
 OSC y byte code
