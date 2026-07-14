@@ -1,8 +1,7 @@
 /*
 GRABACION DE AUDIO EN SUPERCOLLIDER
 
-SuperCollider permite grabar directamente la salida de audio del servidor.
-Para hacerlo, el servidor debe estar encendido y debe existir algún proceso sonoro en reproducción.
+SuperCollider permite grabar directamente la salida de audio del servidor. Para hacerlo, el servidor debe estar encendido y debe existir algún proceso sonoro en reproducción.
 
 Algunas fromas de grabar archivos son:
 
