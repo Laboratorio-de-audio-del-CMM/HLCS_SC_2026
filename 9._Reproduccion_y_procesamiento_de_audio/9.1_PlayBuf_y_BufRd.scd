@@ -5,7 +5,7 @@ Dentro de SC es posible reproducir y manipular archivos de audio en formato .wav
 
 Para hacer esto, primero es necesario almacenar nuestro archivo de audio en un buffer.
 
-Un buffer es un espacio en la memoria del servidor en donde podemos almacenar información y recuperarla rápidamente. Los Buffers se almacenan en forma de arrays, así que cualquier cosa que pueda representarse como una secuencia de números puede vivir ahí. Lo más común es usarlo para almacenar archivos de audio pero también puede almacenar datos como wavetables y datasets.
+Un buffer es un espacio en la memoria del servidor en donde podemos almacenar información y recuperarla rápidamente. Los buffers se almacenan en forma de arrays, así que cualquier cosa que pueda representarse como una secuencia de números puede vivir ahí. Lo más común es usarlo para almacenar archivos de audio pero también puede almacenar datos como wavetables y datasets.
 
 Para almacenar un audio en un buffer usamos la clase Buffer y el método .read. Analicemos sus argumentos:
 
@@ -188,7 +188,7 @@ numChannels: Número de canales del buffer a leer
 bufnum = Número de buffer a utilizar (lo llamamos con .bufnum)
 rate: Velocidad de reproducción (se pueden usar valores negativos para reproducir en reversa)
 trigger: Una señal que al activarse provoque el reinicio de la reproducción
-startPos:  En qué muestra se comenzará a reproducir el Buffer
+startPos:  En qué muestra se comenzará a reproducir el buffer
 loop:  0 = reproducción en loop activada, 1 = reproducción en loop desactivada
 doneAction: acción a realizarse con el nodo cuando el buffer termine de reproducirse
 */
@@ -391,4 +391,3 @@ s.reboot; //Reiniciar el servidor
 
 //O liberarlos todos sin distinción
 Buffer.freeAll;
-
