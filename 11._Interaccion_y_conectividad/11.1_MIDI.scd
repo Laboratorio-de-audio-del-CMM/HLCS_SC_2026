@@ -1,20 +1,71 @@
 /*
 COMUNICACIÓN MIDI EN SC
 
-El protocolo de comunicación MIDI (Musical Instrument Digital Interface o Interfaz Digital de Instrumentos Musicales en español) fue publicado en 1983 y fué rápidamente adoptado por el mundo musical y de audio digital. Actualmente es un estándar de la comunicación para recibir y mandar datos en general y se encuentra disponible en prácticamente cualquier DAW o lenguaje de programación de audio moderno.
+MIDI (Musical Instrument Digital Interface o Interfaz Digital de Instrumentos Musicales, en español) es un protocolo que permite la comunicación entre instrumentos musicales electrónicos, computadoras y otros dispositivos relacionados.
 
-Debido a su diseño, un mensaje de este tipo puede representar valores del 0 al 127 (128 valores). Por lo tanto hay 128 notas MIDI disponibles, 128 valores de velocidad (intensidad), 128 instrumentos, etc. 
+Fue publicado en 1983 y desde entonces tuvo muy rápida aceptación en el mundo musical y de audio digital. Actualmente MIDI es ya un estándar de comunicación para recibir y mandar datos sencillos en general. Se encuentra disponible en prácticamente cualquier DAW o lenguaje de programación de audio moderno.
 
-MIDI es un protocolo efectivo para el audio en tiempo real debido a su relativamente baja resolución.
+Un mensaje midi se compone de información en código binario. Cada digito binario es llamado bit. 8 bits conforman un byte. Un mensaje MIDI se compone de 8 bytes.
 */
 
-//Para mapear MIDI en SC primero tenemos que establecer conexión con el subsistema MIDI de nuestra computadora. Para esto usaremos la clase MIDIClient y el método .init , lo cual nos dará además una lista de los dispositivos MIDI conectados a nuestra computadora. 
+
+//Estructura de un mensaje MIDI:
+(
+
+var ventana, img;
+
+img = Image.open(thisProcess.nowExecutingPath.dirname +/+ "media" +/+ "midi_bytes.jpg");
+
+ventana = Window("Estructura de un mensaje MIDI", img.bounds + [500,500,0,0]);
+
+UserView(ventana,ventana.view.bounds).drawFunc_({img.drawInRect(img.bounds)});
+
+ventana.front;
+);
+
+/*
+El primer byte es llamado byte de estatus y comienza con un bit con valor de 1 para comunicar esto.
+
+Los segundos dos bytes son llamados bytes de datos y comienzan con un bit en valor de 0 para comunicarlo.
+
+Si un bit de cada byte ya está ocupado, nos quedan 7 bits disponibles para representar valores. Si cada bit tiene dos posibles valores tenemos en total 128 combinaciones posibles para cada byte.
+*/
+
+2*2*2*2*2*2*2;
+//o
+2.pow(7);
+
+//El byte de status se divide en dos: los primeros tres bits disponibles después del 1 especifican la acción
+
+2*2*2 //Número de acciones disponibles
+
+//Las acciones disponibles son:
+(
+
+var ventana, img;
+
+img = Image.open(thisProcess.nowExecutingPath.dirname +/+ "media" +/+ "acciones_MIDI.png");
+
+ventana = Window("Mensajes MIDI disponibles", img.bounds + [200,200,0,0]);
+
+UserView(ventana,ventana.view.bounds).drawFunc_({img.drawInRect(img.bounds)});
+
+ventana.front;
+);
+
+//Los segundos cuatro bits representan el canal al cual mandar los datos
+
+2.pow(4); //Número de canales disponibles para envío de información
+
+//En resumen: en MIDI tenemos diferentes tipos de mensajes, que pueden comunicarse en 128 valores a través de 16 canales.
+
+//Para mapear MIDI en SC primero tenemos que establecer conexión con el subsistema MIDI de nuestra computadora. Para esto usaremos la clase MIDIClient y el método .init , lo cual nos dará además una lista de los dispositivos MIDI conectados a nuestra computadora.
 MIDIClient.init;
 
 /*
 Para conectar un dispositivo primero debemos decidir qué queremos hacer con él.
 
-Si lo que queremos es recibir mensajes MIDI usamos la clase MIDIIn. 
+Si lo que queremos es recibir mensajes MIDI usamos la clase MIDIIn.
 
 Si lo que queremos es mandar mensajes MIDI usamos la clase MIDIOut
 
@@ -42,19 +93,62 @@ MIDIFunc.trace(false);//Desactiva la impresión de los datos MIDI recibidos en l
 MIDIIn.disconnectAll;
 MIDIIn.disconnect(device: MIDIClient.sources[2].postln);
 
-/* 
-Si queremos que SC realice acciones en respuesta a un mensaje MIDI entrante, utilizaremos definiciones MIDI.
 
-Las definiciones MIDI registran funciones a realizarse cuando se registra un mensaje MIDI entrante y se crean con la clase MIDIdef, la cuál responde entre otros, a los métodos .noteOn, .noteOff, .cc
+\noteOn
+\noteOff
+\control
+\touch
+\polytouch
+\bend
+\program
+\sysex
+\mtcQF
+\smpte
+\songPosition,
+\songSelect,
+\tuneRequest,
+\midiClock,
+\sysrt,
+\tick,
+\start,
+\continue,
+\stop,
+\activeSense
+\reset
 
-Debemos identificar el tipo de mensaje MIDI que queremos usar (para esto puede ser buena idea usar MIDIFunc.trace(true)). Para este ejemplo utilizaramos mensajes del tipo Control Change (CC).
+
+
+/*
+Si queremos que SC realice acciones en respuesta a un mensaje MIDI entrante, utilizamos definiciones MIDI.
+
+Las definiciones MIDI registran funciones a realizarse cuando se registra un mensaje MIDI entrante y se crean con la clase MIDIdef.
+
+MIDIdef responde a los mensajes MIDI más comunes por medio de los métodos .noteOn, .noteOff, .cc, .polytouch y .bend. La lista completa de métodos se puede consultar en la ayuda de esta clase.
 */
 
-MIDIdef.cc( //Método .cc
-	key: \controlador,
+//Para el siguiente ejemplo usemos los métodos .new y .cc, que poseen argumentos distintos
+
+MIDIdef.new( //Método .new
+	key: \ctrlNew,
 	func: {{Saw.ar(Array.fill(2,{rrand(220,250)}),0.3) * Env.perc.kr(2)}.play},
 	ccNum: 0,
-	chan: 1, 
+	chan: 1,
+	argTemplate: {arg val; val == 127}
+);
+
+MIDIdef.new( //Método .new
+	key: \ctrlNew,
+	func: {{Saw.ar(Array.fill(2,{rrand(220,250)}),0.3) * Env.perc.kr(2)}.play},
+	ccNum: 0,
+	chan: 1,
+	argTemplate: {arg val; val == 127}
+);
+
+MIDIdef.cc( //Método .cc
+	key: \ctrlCC,
+	func: {{Saw.ar(Array.fill(2,{rrand(220,250)}),0.3) * Env.perc.kr(2)}.play},
+	ccNum: 0,
+	chan: 1,
 	argTemplate: {arg val; val == 127}
 );
 
@@ -165,6 +259,10 @@ MIDIdef.cc(\note, { |val| ("Nota MIDI ").post; ~note.value_(val.linlin(0,127,36,
 
 MIDIdef.cc(\freqMod, { |val| ("Frecuencia de modulación ").post; ~freqMod.value_(val.linlin(0,127,0,20).asInteger.postln)},ccNum: 18, chan: 0);
 
+.set
+Spec
+ControlSpec
+
 
 //////////////////////////////MAPEO DE NOTAS MIDI /////////////////////
 //Para mapear las notas de un controlador a notas MIDI, usaremos un sintetizador adaptado y la clase MIDIdef.noteOn y MIDIdef.noteOff
@@ -203,7 +301,7 @@ SynthDef(\phonk, {
 
 MIDIdef.noteOn(\notesOn, {|val, num| ~phonkP[num] = Synth(\phonk,[\midiNote, num, \amp, val.linlin(0,127,0.1,0.8)])});
 
-MIDIdef.noteOff(\notesOff, {|val, num| ~phonkP[num].set(\gate,0)});
+MIDIdef.noteOff(\notesOff, {|val, num| ~phonkP[num].set(\gate,0); ~phonkP[num] = nil});
 
 
 
