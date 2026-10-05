@@ -38,7 +38,7 @@ Si un bit de cada byte ya está ocupado, nos quedan 7 bits disponibles para repr
 
 2*2*2 //Número de acciones disponibles
 
-//Las acciones disponibles más frcuentes y felixbles son:
+//Las acciones disponibles más frecuentes y felixbles son:
 (
 
 var ventana, img;
