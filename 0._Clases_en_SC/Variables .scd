@@ -1,8 +1,8 @@
 //SC.
 
-/*////////////
-//Variables.//
-*/////////////
+/*/////////////////////////
+//Variables y argumentos.//
+*//////////////////////////
 
 //Una variable es un contenedor que nos permite almacenar un instancia de un "OBJETO" y referirnos a el.
 
@@ -42,6 +42,9 @@ x; //"x" y "var x" son diferentes.
 
 ~x.scramble;
 ~x;
+
+
+
 
 
 
